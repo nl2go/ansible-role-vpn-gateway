@@ -1,0 +1,68 @@
+---
+- name: Copy charon-german-dc.conf
+  become: true
+  template:
+    src: "etc/strongswan.d/charon-german-dc.conf"
+    dest: "/etc/strongswan.d/charon-german-dc.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart ipsec
+
+- name: Import ipsec_gateway configuration
+  become: true
+  lineinfile:
+    path: /etc/ipsec.conf
+    state: present
+    regexp: '^include .*ipsec_gateway.*'
+    line: 'include /etc/ipsec.d/nl2go.ipsec_gateway/*.conf'
+  notify: Restart ipsec
+
+- name: Import ipsec_gateway secrets
+  become: true
+  lineinfile:
+    path: /etc/ipsec.secrets
+    state: present
+    regexp: '^include .*ipsec_gateway.*'
+    line: 'include /etc/ipsec.d/nl2go.ipsec_gateway/*.secrets'
+  notify: Restart ipsec
+
+- name: Create /etc/ipsec.d/nl2go.ipsec_gateway/ directory
+  become: true
+  file:
+    path: /etc/ipsec.d/nl2go.ipsec_gateway/
+    owner: root
+    group: root
+    state: directory
+  notify: Restart ipsec
+
+- name: Copy ipsec.conf
+  become: true
+  template:
+    src: "etc/ipsec.d/nl2go.ipsec_gateway/ipsec.conf"
+    dest: "/etc/ipsec.d/nl2go.ipsec_gateway/ipsec.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart ipsec
+
+- name: Copy ipsec.secrets
+  become: true
+  template:
+    src: "etc/ipsec.d/nl2go.ipsec_gateway/ipsec.secrets"
+    dest: "/etc/ipsec.d/nl2go.ipsec_gateway/ipsec.secrets"
+    owner: root
+    group: root
+    mode: 0600
+  notify: Reload ipsec secrets
+
+# FIXME: this fails in Ubuntu 16.04 but strongswan instead works in u16 and u18:
+#- name: IPSec must be running
+#  service:
+#    name: ipsec
+#    state: started
+
+- name: IPSec must be running
+  service:
+    name: strongswan
+    state: started

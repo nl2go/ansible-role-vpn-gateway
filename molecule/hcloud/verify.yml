@@ -1,0 +1,49 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: List iptables rules and look for 172.240.0.0/21 network
+      shell: iptables --list --verbose --numeric --exact --line-numbers | egrep "172.240.0.0/21[[:blank:]]+0.0.0.0/0"  # noqa 301 306
+      register: result
+    - name: Confirm that a rule for 172.240.0.0/21 network is present
+      assert:
+        that:
+          - result is defined
+          - result.failed is defined
+          - result.failed is false
+
+    - name: List iptables rules and look for 10.2.0.0/16 network
+      shell: iptables --list --verbose --numeric --exact --line-numbers | egrep "10.2.0.0/16[[:blank:]]+0.0.0.0/0" # noqa 301 306
+      register: result
+    - name: Confirm that a rule for 10.2.0.0/16 network is present
+      assert:
+        that:
+          - result is defined
+          - result.failed is defined
+          - result.failed is false
+
+    - name: Is IP Forwarding configured?
+      shell: grep '^1$' /proc/sys/net/ipv4/ip_forward  # noqa 301
+      register: result
+    - name: Confirm that IP Forwarding is on.
+      assert:
+        that:
+          - result is defined
+          - result.failed is defined
+          - result.failed is false
+
+    - name: look for ipsec service
+      shell: service ipsec status  # noqa 301 305
+      args:
+        warn: false
+      ignore_errors: yes
+      register: result
+      # NOTE: it returns 4 if ``Unit ipsec.service could not be found.`` (i.e. not installed)
+      # NOTE: it returns 3 if the service is inactive (e.g. installed but can't connect, what is the expected result here)
+      # NOTE: it returns 0 if the service is running as usual.
+    - name: Confirm that the service is somehow there
+      assert:
+        that:
+          - result is defined
+          - result.rc is defined
+          - result.rc != 4

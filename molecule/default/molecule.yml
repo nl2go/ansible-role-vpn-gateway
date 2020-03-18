@@ -1,0 +1,84 @@
+---
+scenario:
+  test_sequence:
+    - lint
+    - cleanup
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+  driver:
+    name: docker
+  lint:
+    name: yamllint
+platforms:
+# FIXME: don't forget to test in all platforms.
+#  - name: debian9
+#    image: debian:9
+#    dockerfile: ../resources/Dockerfile.j2
+#    capabilities:
+#      - NET_ADMIN
+#    groups:
+#      - platforms
+#  - name: debian10
+#    image: debian:10
+#    dockerfile: ../resources/Dockerfile.j2
+#    capabilities:
+#      - NET_ADMIN
+#    groups:
+#      - platforms
+#  - name: Ubuntu16
+#    image: ubuntu:16.04
+#    dockerfile: ../resources/Dockerfile.j2
+#    capabilities:
+#      - NET_ADMIN
+#    groups:
+#      - platforms
+  - name: Ubuntu18
+    image: ubuntu:18.04
+    dockerfile: ../resources/Dockerfile.j2
+    groups:
+      - platforms
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        hetzner_vswitch_host:
+          - name: test-gateway-01
+            ipv4_address: 172.4.0.20
+        vpn_gateway_networks:
+          - "172.240.0.0/21"
+          - "10.2.0.0/16"
+        vpn_gateway_public_network_gateway: 2.5.7.8
+        vpn_gateway_ethernet_dev: eth6
+        vpn_gateway_de_prod_network: "172.4.0.0/21"
+        vpn_gateway_vpns:
+          # Name has to be unique
+          site_to_site:
+            - name: datacenter_connection1
+              remote_public_ip: 1.2.3.4
+              psk: "corona-hamster"
+              routes:
+                - name: "Route 1"
+                  remote_network: "172.240.0.0/21"
+                - name: "Route 2"
+                  remote_network: "10.2.0.0/16"
+  lint:
+    name: ansible-lint
+  playbooks:
+    prepare: ../resources/playbooks/prepare.yml
+    cleanup: ../resources/playbooks/cleanup.yml
+verifier:
+  name: testinfra
+#  env:
+#    FOO: "bar"
+  lint:
+    name: flake8

@@ -1,0 +1,20 @@
+---
+- name: Configure a gateway
+  hosts: all
+  gather_facts: no
+  become: true
+  user: root
+  #vars:
+#    hetzner_firewall_webservice_username: "{{ hetzner_robot_api_user}}"
+#    hetzner_firewall_webservice_password: "{{ hetzner_robot_api_pass}}"
+#    hetzner_key_webservice_username: "{{ hetzner_robot_api_user}}"
+#    hetzner_key_webservice_password: "{{ hetzner_robot_api_pass}}"
+#    hetzner_vswitch_webservice_username: "{{ hetzner_robot_api_user}}"
+#    hetzner_vswitch_webservice_password: "{{ hetzner_robot_api_pass}}"
+  pre_tasks:
+    - name: Only run "update_cache=yes" if the last one is older than 1 day.
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400
+  roles:
+    - role: vpn-gateway

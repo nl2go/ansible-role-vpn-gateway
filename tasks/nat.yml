@@ -1,0 +1,72 @@
+---
+- name: Install tools
+  package:
+    name:
+      - netfilter-persistent
+      - iptables-persistent
+    state: present
+
+- name: Set required sysctl settings
+  become: true
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop: "{{ sysctl_config | dict2items }}"
+  vars:
+    sysctl_config:
+      net.ipv4.ip_forward: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+      net.ipv6.conf.all.disable_ipv6: 1
+      net.ipv6.conf.default.disable_ipv6: 1
+
+# FIXME idempotence test fails obviously cause of these rules.
+# FIXME flush or not to flush?
+- name: Flush input rules
+  iptables:
+    chain: INPUT
+    flush: yes
+  notify: persist iptables
+
+- name: Flush forward rules
+  iptables:
+    chain: FORWARD
+    flush: yes
+  notify: persist iptables
+
+- name: Flush nat rules
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    flush: yes
+  notify: persist iptables
+
+- name: Adds forward rules
+  iptables:
+    action: append
+    chain: FORWARD
+    source: "{{ item }}"
+    jump: ACCEPT
+  notify: persist iptables
+  loop: "{{ vpn_gateway_networks }}"
+
+- name: Reject the rest
+  iptables:
+    action: append
+    chain: FORWARD
+    jump: REJECT
+  notify: persist iptables
+
+- name: Add NAT rules
+  iptables:
+    table: nat
+    action: append
+    chain: POSTROUTING
+    source: "{{ item }}"
+    #out_interface: "{{ wan_interface }}"
+    jump: MASQUERADE
+  notify: persist iptables
+  loop: "{{ vpn_gateway_networks }}"

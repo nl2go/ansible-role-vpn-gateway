@@ -1,0 +1,88 @@
+---
+lint:
+  name: yamllint
+
+driver:
+  name: hetznercloud
+  ssh_connection_options:
+    - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
+    - '-o IdentitiesOnly=yes'  # This is needed to check only THE actual key instead of all keys (and eventually getting a _too many failed attempts_ message)
+    - '-o StrictHostKeyChecking=no'
+
+platforms:
+  - name: debian9stretch
+    server_type: cx11
+    image: debian-9
+    groups:
+      - platforms
+  - name: debian10buster
+    server_type: cx11
+    image: debian-10
+    groups:
+      - platforms
+  - name: ubuntu16
+    server_type: cx11
+    image: ubuntu-16.04
+    groups:
+      - platforms
+  - name: ubuntu18
+    server_type: cx11
+    image: ubuntu-18.04
+    groups:
+      - platforms
+
+provisioner:
+  name: ansible
+  config_options:
+    ssh_connection:
+      pipelining: True
+  inventory:
+    group_vars:
+      all:
+        hetzner_vswitch_host:
+          - name: test-gateway-01
+            ipv4_address: 172.4.0.20
+        vpn_gateway_networks:
+          - "172.240.0.0/21"
+          - "10.2.0.0/16"
+        vpn_gateway_public_network_gateway: 2.5.7.8
+        vpn_gateway_ethernet_dev: eth6
+        vpn_gateway_de_prod_network: "172.4.0.0/21"
+        vpn_gateway_vpns:
+          # Name has to be unique
+          site_to_site:
+            - name: datacenter_connection1
+              remote_public_ip: 1.2.3.4
+              psk: "corona-hamster"
+              routes:
+                - name: "Route 1"
+                  remote_network: "172.240.0.0/21"
+                - name: "Route 2"
+                  remote_network: "10.2.0.0/16"
+  lint:
+    name: ansible-lint
+  playbooks:
+    prepare: ../resources/playbooks/prepare.yml
+    cleanup: ../resources/playbooks/cleanup.yml
+
+verifier:
+  name: ansible
+  lint:
+    name: ansible-lint
+
+scenario:
+  name: hcloud
+  test_sequence:
+    - lint
+    - cleanup
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    #- idempotence # FIXME this can only fail.
+    - side_effect
+    - verify
+    - cleanup
+    - destroy

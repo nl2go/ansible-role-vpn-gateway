@@ -1,0 +1,16 @@
+---
+- name: Restart ipsec
+  become: yes
+  command: "ipsec restart"
+
+- name: Reload ipsec secrets
+  become: yes
+  command: "ipsec rereadsecrets"
+
+- name: save iptables
+  command: netfilter-persistent save
+  listen: persist iptables
+
+- name: reload iptables
+  command: netfilter-persistent reload
+  listen: persist iptables

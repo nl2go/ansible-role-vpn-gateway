@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: "Include vpn-gateway"
+      include_role:
+        name: "vpn-gateway"
