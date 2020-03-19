@@ -2,7 +2,7 @@
 - name: Configure a gateway
   hosts: all
   gather_facts: no
-  become: true
+  become: yes
   user: root
   pre_tasks:
     - name: Only run "update_cache=yes" if the last one is older than 1 day.

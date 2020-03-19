@@ -7,7 +7,6 @@
     state: present
 
 - name: Set required sysctl settings
-  become: true
   sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"

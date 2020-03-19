@@ -1,6 +1,5 @@
 ---
 - name: Install strongswan
-  become: true
   package:
     name:
       - strongswan

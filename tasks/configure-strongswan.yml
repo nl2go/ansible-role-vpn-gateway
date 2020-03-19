@@ -1,6 +1,5 @@
 ---
 - name: Copy charon-german-dc.conf
-  become: true
   template:
     src: charon.conf.j2
     dest: "/etc/strongswan.d/charon-{{ role_name }}.conf"
@@ -10,7 +9,6 @@
   notify: Restart ipsec
 
 - name: Import ipsec_gateway configuration
-  become: true
   lineinfile:
     path: /etc/ipsec.conf
     state: present
@@ -19,7 +17,6 @@
   notify: Restart ipsec
 
 - name: Import ipsec_gateway secrets
-  become: true
   lineinfile:
     path: /etc/ipsec.secrets
     state: present
@@ -28,7 +25,6 @@
   notify: Restart ipsec
 
 - name: Create /etc/ipsec.d/nl2go.ipsec_gateway/ directory
-  become: true
   file:
     path: "{{ vpn_gateway_config_dir }}"
     owner: root
@@ -37,7 +33,6 @@
   notify: Restart ipsec
 
 - name: Copy ipsec.conf
-  become: true
   template:
     src: ipsec.conf.j2
     dest: "{{ vpn_gateway_config_dir }}/ipsec.conf"
@@ -47,7 +42,6 @@
   notify: Restart ipsec
 
 - name: Copy ipsec.secrets
-  become: true
   template:
     src: ipsec.secrets.j2
     dest: "{{ vpn_gateway_config_dir }}/ipsec.secrets"

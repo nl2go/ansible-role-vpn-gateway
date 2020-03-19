@@ -7,7 +7,6 @@
     group: root
 
 - name: Copy create-vti.sh
-  become: true
   template:
     src: "opt/helpers/create-vti.sh"
     dest: "/opt/helpers/create-vti.sh"

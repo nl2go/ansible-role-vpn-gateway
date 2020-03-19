@@ -1,10 +1,8 @@
 ---
 - name: Restart ipsec
-  become: yes
   command: "ipsec restart"
 
 - name: Reload ipsec secrets
-  become: yes
   command: "ipsec rereadsecrets"
 
 - name: save iptables
