@@ -1,12 +1,9 @@
 ---
-# NOTE: this comes from https://github.com/ansible-community/molecule-hetznercloud/blob/master/molecule_hetznercloud/cookiecutter/scenario/driver/hetznercloud/%7B%7Bcookiecutter.molecule_directory%7D%7D/%7B%7Bcookiecutter.scenario_name%7D%7D/create.yml
-
 - name: Create
   hosts: localhost
   connection: local
   gather_facts: false
-#  no_log: "{{ molecule_no_log }}"
-  no_log: false
+  no_log: "{{ molecule_no_log }}"
   vars:
     ssh_port: 22
     ssh_user: root
@@ -55,6 +52,8 @@
       until: hetzner_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+
+    # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config dict
       set_fact:

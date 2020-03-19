@@ -1,5 +1,4 @@
 ---
-# NOTE: from https://github.com/ansible-community/molecule-hetznercloud/blob/master/molecule_hetznercloud/cookiecutter/scenario/driver/hetznercloud/%7B%7Bcookiecutter.molecule_directory%7D%7D/%7B%7Bcookiecutter.scenario_name%7D%7D/destroy.yml
 - name: Destroy
   hosts: localhost
   connection: local
@@ -44,6 +43,8 @@
       when:
         - not skip_instances
         - instance_conf | length  # must contain at least one instance
+
+    # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config
       set_fact:

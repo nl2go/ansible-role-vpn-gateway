@@ -6,8 +6,6 @@ driver:
   name: hetznercloud
   ssh_connection_options:
     - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
-    - '-o IdentitiesOnly=yes'  # This is needed to check only THE actual key instead of all keys (and eventually getting a _too many failed attempts_ message)
-    - '-o StrictHostKeyChecking=no'
 
 platforms:
   - name: debian9stretch
@@ -55,6 +53,9 @@ provisioner:
                 - 10.2.0.0/16
   lint:
     name: ansible-lint
+  playbooks:
+    create: ../resources/playbooks/create.yml
+    destroy: ../resources/playbooks/destroy.yml
 
 verifier:
   name: ansible
