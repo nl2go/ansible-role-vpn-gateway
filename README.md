@@ -1,70 +1,82 @@
-Role Name
-=========
+[![Travis (.org) branch](https://img.shields.io/travis/nl2go/ansible-role-vpn-gateway/master)](https://travis-ci.org/nl2go/ansible-role-vpn-gateway)
+[![Codecov](https://img.shields.io/codecov/c/github/nl2go/ansible-role-vpn-gateway)](https://codecov.io/gh/nl2go/ansible-role-vpn-gateway)
+[![Ansible Galaxy](https://img.shields.io/badge/role-nl2go.vpn-gateway-blue.svg)](https://galaxy.ansible.com/nl2go/vpn_gateway/)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/nl2go/ansible-role-vpn-gateway)](https://galaxy.ansible.com/nl2go/vpn_gateway)
+[![Ansible Galaxy Downloads](https://img.shields.io/ansible/role/d/46005.svg?color=blue)](https://galaxy.ansible.com/nl2go/vpn_gateway/)
 
-This role configures a gateway to connect the network in the German DC with the networks in French DC.
+# Ansible Role: VPN Gateway
 
-Requirements
-------------
+An Ansible Role that manages a VPN tunnel setup between gateways based on [IPsec](https://de.wikipedia.org/wiki/IPsec) / [strongSwan](https://www.strongswan.org/) 
+and provides related routing configuration.
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+## Role Variables
 
-Role Variables
---------------
+Available variables are listed below, along with default values (see `defaults/main.yml`):
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+    vpn_gateway_configs:
+      - name: default
+        psk: secret
+        
+Configuration sets must be defined using `vpn_gateway_configs` variable. The `name` of the configuration set is mandatory and
+used for identification. Pre-shared key can be specified using `psk`.
+    
+    vpn_gateway_configs:
+      - name: default
+        psk: secret
+        local:
+          public: 1.1.1.1
+          private: 172.4.0.20
+          private_interface: eth6
+          networks:
+            - 172.4.0.0/21
+        remote:
+          public: 1.2.3.4
+          networks:
+            - 172.240.0.0/21
+            - 10.2.0.0/16
 
-Dependencies
-------------
+A configuration set contains the `local` and `remote` peer configuration part.
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+    vpn_gateway_config_dir: "/etc/ipsec.d/{{ role_name }}"
+    
+Defines the custom IPsec configuration directory for isolation purposes.
 
-Example Playbook
-----------------
+## Tags
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Tags can be used to limit the role execution to a particular task module. Following tags are available:
 
-    - hosts: servers
+- `vpn_gateway`: Covers the full role lifecycle.
+- `vpn_gateway_install`, `install`: Installs required packages
+- `vpn_gateway_config`, `config`: Configures required packages
+
+## Dependencies
+
+None.
+
+## Example Playbook
+
+    - hosts: all
       roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-MIT
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+         - nl2go.vpn_gateway
+              
+## Development
+Use [docker-molecule](https://github.com/nl2go/docker-molecule) following the instructions to run [Molecule](https://molecule.readthedocs.io/en/stable/)
+or install [Molecule](https://molecule.readthedocs.io/en/stable/) locally (not recommended, version conflicts might appear).
 
 
-Testing
-=======
+Use following to run tests:
 
-I do like this:
+    molecule test --all
 
-```
-pipenv install
-pipenv shell
-molecule test --scenario-name hcloud
-```
+## Maintainers
 
-Or to debug:
-```
-molecule create --scenario-name hcloud
-...
-molecule destroy --scenario-name hcloud
-```
+- [build-failure](https://github.com/build-failure)
+- [pablo2go](https://github.com/pablo2go)
 
-TODO
-====
+## License
 
-* Update README
-* what to do with pipenv?
-* License?
-* What to check? ``ipsec status`` is not going to work
-  * Actual connection to the FR gateway is not going to work
-  * Don't run ``ip route show`` cause the route are loaded AFTER connecting to the other ipsec end, which doesn't happen during tests.
-* Tokens and credentials
-  * Ansible Vault
-  * Rotate
+See the [LICENSE.md](LICENSE.md) file for details.
+
+## Author Information
+
+This role was created by in 2020 by [Newsletter2Go GmbH](https://www.newsletter2go.com/).
