@@ -6,8 +6,8 @@
 
 # Ansible Role: VPN Gateway
 
-An Ansible Role that manages a VPN tunnel setup between gateways based on [IPsec](https://de.wikipedia.org/wiki/IPsec) / [strongSwan](https://www.strongswan.org/) 
-and provides related routing configuration.
+An Ansible Role that manages a VPN tunnel setup between two peers based on [IPsec](https://de.wikipedia.org/wiki/IPsec) / [strongSwan](https://www.strongswan.org/) 
+and provides gateway related routing configuration.
 
 ## Role Variables
 
