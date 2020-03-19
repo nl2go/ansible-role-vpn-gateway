@@ -7,12 +7,12 @@
 
 - import_tasks: configure-strongswan.yml
   tags: [strongswan, ipsec]
-  when: vpn_gateway_vpns is defined and vpn_gateway_vpns.site_to_site is defined
+  when: vpn_gateway_configs is defined
 
 - import_tasks: install-helpers.yml
   tags: [helpers]
-  when: vpn_gateway_vpns is defined and vpn_gateway_vpns.site_to_site is defined
+  when: vpn_gateway_configs is defined
 
 - import_tasks: nat.yml
   tags: [nat]
-  when: vpn_gateway_vpns is defined and vpn_gateway_vpns.site_to_site is defined
+  when: vpn_gateway_configs is defined

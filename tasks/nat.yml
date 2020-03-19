@@ -51,7 +51,7 @@
     source: "{{ item }}"
     jump: ACCEPT
   notify: persist iptables
-  loop: "{{ vpn_gateway_networks }}"
+  loop: "{{ vpn_gateway_configs[0].local.networks }} + {{ vpn_gateway_configs[0].remote.networks }}"
 
 - name: Reject the rest
   iptables:
@@ -69,4 +69,4 @@
     #out_interface: "{{ wan_interface }}"
     jump: MASQUERADE
   notify: persist iptables
-  loop: "{{ vpn_gateway_networks }}"
+  loop: "{{ vpn_gateway_configs[0].local.networks }} + {{ vpn_gateway_configs[0].remote.networks }}"

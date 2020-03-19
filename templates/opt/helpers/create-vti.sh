@@ -16,12 +16,12 @@ case "${PLUTO_VERB}" in
         sysctl -w "net.ipv4.conf.${VTI_IF}.disable_policy=1"
 
         case "${PLUTO_CONNECTION}" in
-            {% for conn in vpn_gateway_vpns.site_to_site %}
-            {{ conn.name }})
-                {% for route in conn.routes %}
-                    ip addr add {{ hetzner_vswitch_host[0].ipv4_address }} remote {{ route.remote_network }} dev "${VTI_IF}"
+            {% for config in vpn_gateway_configs %}
+            "{{ config.name }}")
+                {% for network in config.remote.networks %}
+                    ip addr add {{ config.local.private }} remote {{ network }} dev "${VTI_IF}"
                 {% endfor %}
-                    ip route add {{ conn.remote_public_ip }} via {{ vpn_gateway_public_network_gateway }} dev {{ vpn_gateway_ethernet_dev }}
+                    ip route add {{ config.remote.public }} via {{ config.local.public }} dev {{ config.local.private_interface }}
                 ;;
             {% endfor %}
         esac

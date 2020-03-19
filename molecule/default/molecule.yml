@@ -51,26 +51,20 @@ provisioner:
   inventory:
     group_vars:
       all:
-        hetzner_vswitch_host:
-          - name: test-gateway-01
-            ipv4_address: 172.4.0.20
-        vpn_gateway_networks:
-          - "172.240.0.0/21"
-          - "10.2.0.0/16"
-        vpn_gateway_public_network_gateway: 2.5.7.8
-        vpn_gateway_ethernet_dev: eth6
-        vpn_gateway_de_prod_network: "172.4.0.0/21"
-        vpn_gateway_vpns:
-          # Name has to be unique
-          site_to_site:
-            - name: datacenter_connection1
-              remote_public_ip: 1.2.3.4
-              psk: "corona-hamster"
-              routes:
-                - name: "Route 1"
-                  remote_network: "172.240.0.0/21"
-                - name: "Route 2"
-                  remote_network: "10.2.0.0/16"
+        vpn_gateway_configs:
+          - name: default
+            psk: corona-hamster
+            local:
+              public: 2.5.7.8
+              private: 172.4.0.20
+              private_interface: eth6
+              networks:
+                - 172.4.0.0/21
+            remote:
+              public: 1.2.3.4
+              networks:
+                - 172.240.0.0/21
+                - 10.2.0.0/16
   lint:
     name: ansible-lint
   playbooks:
