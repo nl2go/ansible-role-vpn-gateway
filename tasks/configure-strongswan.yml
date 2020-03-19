@@ -2,7 +2,7 @@
 - name: Copy charon-german-dc.conf
   become: true
   template:
-    src: "charon.conf"
+    src: charon.conf.j2
     dest: "/etc/strongswan.d/charon-{{ role_name }}.conf"
     owner: root
     group: root
@@ -39,7 +39,7 @@
 - name: Copy ipsec.conf
   become: true
   template:
-    src: "ipsec.conf"
+    src: ipsec.conf.j2
     dest: "{{ vpn_gateway_config_dir }}/ipsec.conf"
     owner: root
     group: root
@@ -49,7 +49,7 @@
 - name: Copy ipsec.secrets
   become: true
   template:
-    src: "ipsec.secrets"
+    src: ipsec.secrets.j2
     dest: "{{ vpn_gateway_config_dir }}/ipsec.secrets"
     owner: root
     group: root
