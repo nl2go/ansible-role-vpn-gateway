@@ -6,6 +6,8 @@ driver:
   name: hetznercloud
   ssh_connection_options:
     - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
+    - '-o IdentitiesOnly=yes'
+    - '-o StrictHostKeyChecking=no'
 
 platforms:
   - name: debian9stretch
@@ -63,7 +65,7 @@ verifier:
     name: ansible-lint
 
 scenario:
-  name: hcloud
+  name: default
   test_sequence:
     - lint
     - cleanup

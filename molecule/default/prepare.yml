@@ -1,4 +1,16 @@
 ---
+- name: Prepare controller
+  hosts: localhost
+  tasks:
+    - name: Install netaddr package
+      pip:
+        name: netaddr
+    - name: Ensure SSH control path directoy exists
+      file:
+        path: "{{ lookup('env','HOME') }}/.ansible/cp"
+        state: directory
+        mode: '0755'
+
 - name: Prepare hosts
   hosts: all
   become: yes
