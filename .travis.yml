@@ -1,29 +1,20 @@
 ---
-language: python
-python: "2.7"
+services: docker
 
-# Use the new container infrastructure
-sudo: false
+env:
+  global:
+    - MOLECULE_PROJECT_DIR: "$TRAVIS_BUILD_DIR"
+    - MOLECULE_ROLE_NAME: "$(basename $TRAVIS_BUILD_DIR)"
 
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
-
-install:
-  # Install ansible
-  - pip install ansible
-
-  # Check ansible version
-  - ansible --version
-
-  # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' >ansible.cfg
+before_script:
+  - wget https://raw.githubusercontent.com/nl2go/docker-molecule/2.22-n2g-1.0.0/docker-compose.yml
+  - docker-compose up -d
 
 script:
-  # Basic role syntax check
-  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  - docker-compose exec molecule molecule test --all
+
+after_script:
+  - docker-compose down
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
