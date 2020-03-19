@@ -1,7 +1,7 @@
 [![Travis (.org) branch](https://img.shields.io/travis/nl2go/ansible-role-vpn-gateway/master)](https://travis-ci.org/nl2go/ansible-role-vpn-gateway)
 [![Ansible Galaxy](https://img.shields.io/badge/role-nl2go.vpn-gateway-blue.svg)](https://galaxy.ansible.com/nl2go/vpn_gateway/)
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/nl2go/ansible-role-vpn-gateway)](https://galaxy.ansible.com/nl2go/vpn_gateway)
-[![Ansible Galaxy Downloads](https://img.shields.io/ansible/role/d/46005.svg?color=blue)](https://galaxy.ansible.com/nl2go/vpn_gateway/)
+[![Ansible Galaxy Downloads](https://img.shields.io/ansible/role/d/47292.svg?color=blue)](https://galaxy.ansible.com/nl2go/vpn_gateway/)
 
 # Ansible Role: VPN Gateway
 
