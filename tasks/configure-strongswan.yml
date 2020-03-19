@@ -6,7 +6,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: Restart ipsec
+  notify: restart ipsec
 
 - name: Import ipsec_gateway configuration
   lineinfile:
@@ -14,7 +14,7 @@
     state: present
     regexp: "^include {{ vpn_gateway_config_dir + '/*.conf' | regex_escape }}$"
     line: "include {{ vpn_gateway_config_dir }}/*.conf"
-  notify: Restart ipsec
+  notify: restart ipsec
 
 - name: Import ipsec_gateway secrets
   lineinfile:
@@ -22,7 +22,7 @@
     state: present
     regexp: "^include {{ vpn_gateway_config_dir + '/*.secrets' | regex_escape }}$"
     line: "include {{ vpn_gateway_config_dir }}/*.secrets"
-  notify: Restart ipsec
+  notify: restart ipsec
 
 - name: Create /etc/ipsec.d/nl2go.ipsec_gateway/ directory
   file:
@@ -30,7 +30,7 @@
     owner: root
     group: root
     state: directory
-  notify: Restart ipsec
+  notify: restart ipsec
 
 - name: Copy ipsec.conf
   template:
@@ -39,7 +39,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: Restart ipsec
+  notify: restart ipsec
 
 - name: Copy ipsec.secrets
   template:
@@ -48,7 +48,7 @@
     owner: root
     group: root
     mode: 0600
-  notify: Reload ipsec secrets
+  notify: reload ipsec
 
 # FIXME: this fails in Ubuntu 16.04 but strongswan instead works in u16 and u18:
 #- name: IPSec must be running

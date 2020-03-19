@@ -1,10 +1,10 @@
 ---
-- name: Restart ipsec
+- name: restart ipsec
   service:
     name: strongswan
     state: restarted
 
-- name: Reload ipsec secrets
+- name: reload ipsec
   command: ipsec reload
 
 - name: save iptables
