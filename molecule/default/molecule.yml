@@ -41,7 +41,7 @@ provisioner:
       all:
         vpn_gateway_configs:
           - name: default
-            psk: corona-hamster
+            psk: secret
             local:
               public: 1.1.1.1
               private: 172.4.0.20
