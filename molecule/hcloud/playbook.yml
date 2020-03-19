@@ -1,13 +1,6 @@
 ---
-- name: Configure a gateway
+- name: Configure hosts
   hosts: all
-  gather_facts: no
   become: yes
-  user: root
-  pre_tasks:
-    - name: Only run "update_cache=yes" if the last one is older than 1 day.
-      apt:
-        update_cache: yes
-        cache_valid_time: 86400
   roles:
     - role: ansible-role-vpn-gateway

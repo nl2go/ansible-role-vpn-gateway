@@ -10,7 +10,7 @@
         that:
           - result is defined
           - result.failed is defined
-          - result.failed is false
+          - not result.failed
 
     - name: List iptables rules and look for 10.2.0.0/16 network
       shell: iptables --list --verbose --numeric --exact --line-numbers | egrep "10.2.0.0/16[[:blank:]]+0.0.0.0/0" # noqa 301 306
@@ -20,7 +20,7 @@
         that:
           - result is defined
           - result.failed is defined
-          - result.failed is false
+          - not result.failed
 
     - name: Is IP Forwarding configured?
       shell: grep '^1$' /proc/sys/net/ipv4/ip_forward  # noqa 301
@@ -30,10 +30,10 @@
         that:
           - result is defined
           - result.failed is defined
-          - result.failed is false
+          - not result.failed
 
     - name: look for ipsec service
-      shell: service ipsec status  # noqa 301 305
+      shell: service strongswan status  # noqa 301 305
       args:
         warn: false
       ignore_errors: yes

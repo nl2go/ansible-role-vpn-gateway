@@ -55,9 +55,6 @@ provisioner:
                 - 10.2.0.0/16
   lint:
     name: ansible-lint
-  playbooks:
-    prepare: ../resources/playbooks/prepare.yml
-    cleanup: ../resources/playbooks/cleanup.yml
 
 verifier:
   name: ansible
