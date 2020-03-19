@@ -1,2 +1,3 @@
 ---
+vpn_gateway_config_dir: "/etc/ipsec.d/{{ role_name }}"
 vpn_gateway_configs: []

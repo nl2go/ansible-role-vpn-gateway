@@ -2,8 +2,8 @@
 - name: Copy charon-german-dc.conf
   become: true
   template:
-    src: "etc/strongswan.d/charon-german-dc.conf"
-    dest: "/etc/strongswan.d/charon-german-dc.conf"
+    src: "charon.conf"
+    dest: "/etc/strongswan.d/charon-{{ role_name }}.conf"
     owner: root
     group: root
     mode: 0644
@@ -14,8 +14,8 @@
   lineinfile:
     path: /etc/ipsec.conf
     state: present
-    regexp: '^include .*ipsec_gateway.*'
-    line: 'include /etc/ipsec.d/nl2go.ipsec_gateway/*.conf'
+    regexp: "^include {{ vpn_gateway_config_dir + '/*.conf' | regex_escape }}$"
+    line: "include {{ vpn_gateway_config_dir }}/*.conf"
   notify: Restart ipsec
 
 - name: Import ipsec_gateway secrets
@@ -23,14 +23,14 @@
   lineinfile:
     path: /etc/ipsec.secrets
     state: present
-    regexp: '^include .*ipsec_gateway.*'
-    line: 'include /etc/ipsec.d/nl2go.ipsec_gateway/*.secrets'
+    regexp: "^include {{ vpn_gateway_config_dir + '/*.secrets' | regex_escape }}$"
+    line: "include {{ vpn_gateway_config_dir }}/*.secrets"
   notify: Restart ipsec
 
 - name: Create /etc/ipsec.d/nl2go.ipsec_gateway/ directory
   become: true
   file:
-    path: /etc/ipsec.d/nl2go.ipsec_gateway/
+    path: "{{ vpn_gateway_config_dir }}"
     owner: root
     group: root
     state: directory
@@ -39,8 +39,8 @@
 - name: Copy ipsec.conf
   become: true
   template:
-    src: "etc/ipsec.d/nl2go.ipsec_gateway/ipsec.conf"
-    dest: "/etc/ipsec.d/nl2go.ipsec_gateway/ipsec.conf"
+    src: "ipsec.conf"
+    dest: "{{ vpn_gateway_config_dir }}/ipsec.conf"
     owner: root
     group: root
     mode: 0644
@@ -49,8 +49,8 @@
 - name: Copy ipsec.secrets
   become: true
   template:
-    src: "etc/ipsec.d/nl2go.ipsec_gateway/ipsec.secrets"
-    dest: "/etc/ipsec.d/nl2go.ipsec_gateway/ipsec.secrets"
+    src: "ipsec.secrets"
+    dest: "{{ vpn_gateway_config_dir }}/ipsec.secrets"
     owner: root
     group: root
     mode: 0600
