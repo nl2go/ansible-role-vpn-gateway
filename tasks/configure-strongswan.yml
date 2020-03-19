@@ -50,12 +50,6 @@
     mode: 0600
   notify: reload ipsec
 
-# FIXME: this fails in Ubuntu 16.04 but strongswan instead works in u16 and u18:
-#- name: IPSec must be running
-#  service:
-#    name: ipsec
-#    state: started
-
 - name: IPSec must be running
   service:
     name: strongswan
