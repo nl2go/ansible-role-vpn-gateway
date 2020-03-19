@@ -1,9 +1,11 @@
 ---
 - name: Restart ipsec
-  command: "ipsec restart"
+  service:
+    name: strongswan
+    state: restarted
 
 - name: Reload ipsec secrets
-  command: "ipsec rereadsecrets"
+  command: ipsec reload
 
 - name: save iptables
   command: netfilter-persistent save
