@@ -1,9 +1,10 @@
 galaxy_info:
   author: nl2go
   role_name: vpn_gateway
-  description: "Setup and configuration for the IPSec Gateway between datacenters."
+  description: "Manages a VPN tunnel setup between two peers based on IPsec/strongSwan\
+    and provides gateway related routing configuration."
   company: Newsletter2go GmbH
-  issue_tracker_url: "https://github.com/nl2go/ansible-role-FIXME"
+  issue_tracker_url: "https://github.com/nl2go/ansible-role-vpn-gateway"
   license: MIT
   min_ansible_version: 2.8
   github_branch: master
@@ -24,4 +25,4 @@ galaxy_info:
     - strongswan
     - iptables
     - nat
-dependencies: []  # FIXME hcloud?
+dependencies: []
