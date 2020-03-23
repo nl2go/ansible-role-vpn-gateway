@@ -4,7 +4,7 @@ galaxy_info:
   description: "Manages a VPN tunnel setup between two peers based on IPsec/strongSwan\
     and provides gateway related routing configuration."
   company: Newsletter2go GmbH
-  issue_tracker_url: "https://github.com/nl2go/ansible-role-vpn-gateway"
+  issue_tracker_url: "https://github.com/nl2go/ansible-role-vpn-gateway/issues"
   license: MIT
   min_ansible_version: 2.8
   github_branch: master
