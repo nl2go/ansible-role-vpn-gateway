@@ -22,50 +22,16 @@
       net.ipv6.conf.all.disable_ipv6: 1
       net.ipv6.conf.default.disable_ipv6: 1
 
-# FIXME idempotence test fails obviously cause of these rules.
-# FIXME flush or not to flush?
-- name: Flush input rules
-  iptables:
-    chain: INPUT
-    flush: yes
-  notify: persist iptables
+- name: Upload firewall rules
+  template:
+    src: iptables-rules.j2
+    dest: /tmp/iptables-rules
+    mode: '0444'
 
-- name: Flush forward rules
-  iptables:
-    chain: FORWARD
-    flush: yes
-  notify: persist iptables
-
-- name: Flush nat rules
-  iptables:
-    table: nat
-    chain: POSTROUTING
-    flush: yes
-  notify: persist iptables
-
-- name: Adds forward rules
-  iptables:
-    action: append
-    chain: FORWARD
-    source: "{{ item }}"
-    jump: ACCEPT
-  notify: persist iptables
-  loop: "{{ vpn_gateway_configs[0].local.networks }} + {{ vpn_gateway_configs[0].remote.networks }}"
-
-- name: Reject the rest
-  iptables:
-    action: append
-    chain: FORWARD
-    jump: REJECT
-  notify: persist iptables
-
-- name: Add NAT rules
-  iptables:
-    table: nat
-    action: append
-    chain: POSTROUTING
-    source: "{{ item }}"
-    #out_interface: "{{ wan_interface }}"
-    jump: MASQUERADE
-  notify: persist iptables
-  loop: "{{ vpn_gateway_configs[0].local.networks }} + {{ vpn_gateway_configs[0].remote.networks }}"
+- name: Load firewall rules
+  shell: |
+    set -o pipefail
+    cat /tmp/iptables-rules | iptables-restore
+  args:
+    executable: /bin/bash
+  changed_when: False
