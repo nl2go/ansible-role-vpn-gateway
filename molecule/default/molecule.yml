@@ -75,7 +75,7 @@ scenario:
     - create
     - prepare
     - converge
-    #- idempotence # FIXME this can only fail.
+    - idempotence
     - side_effect
     - verify
     - cleanup
