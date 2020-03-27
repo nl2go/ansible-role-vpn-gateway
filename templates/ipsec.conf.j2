@@ -30,6 +30,6 @@ conn {{ config.name }}
    leftsubnet={{ config.remote.networks | join(',') }}
    left={{ config.remote.public | ipaddr }}
    rightupdown=/opt/helpers/create-vti.sh
-   right={{ ansible_host }}
+   right={{ config.local.public }}
    rightsubnet={{ config.local.networks | join(',') }}
 {% endfor %}
