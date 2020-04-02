@@ -22,16 +22,22 @@
       net.ipv6.conf.all.disable_ipv6: 1
       net.ipv6.conf.default.disable_ipv6: 1
 
-- name: Upload firewall rules
-  template:
-    src: iptables-rules.j2
-    dest: /tmp/iptables-rules
-    mode: '0444'
+- name: set firewall rules for NAT
+  set_fact:
+    firewall_additional_rules: "{{ firewall_additional_rules | default('[]') }} + ['iptables -A FORWARD -s {{ item }} -j ACCEPT'] + ['iptables -A POSTROUTING -s {{ item }} -j MASQUERADE']"
+  with_items: "{{ vpn_gateway_configs[0].local.networks }} + {{ vpn_gateway_configs[0].remote.networks }}"
 
-- name: Load firewall rules
-  shell: |
-    set -o pipefail
-    cat /tmp/iptables-rules | iptables-restore
-  args:
-    executable: /bin/bash
-  changed_when: False
+- name: Activate firewall rules
+  vars:
+    firewall_state: started
+    firewall_enabled_at_boot: true
+    firewall_disable_firewalld: true
+    firewall_disable_ufw: true
+    firewall_enable_ipv6: false
+    firewall_flush_rules_and_chains: false
+    firewall_log_dropped_packets: false
+    firewall_allowed_tcp_ports:
+      - "22"
+    firewall_allowed_udp_ports: []
+  include_role:
+      name: geerlingguy.firewall
