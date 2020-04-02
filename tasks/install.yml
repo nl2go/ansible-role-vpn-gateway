@@ -1,4 +1,10 @@
 ---
+- name: Update repository information in Ubuntu
+  apt:
+    cache_valid_time: 3600
+  when: ansible_distribution == 'Ubuntu'
+  changed_when: False
+
 - name: Install strongswan
   package:
     name:
