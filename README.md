@@ -22,10 +22,16 @@ used for identification. Pre-shared key can be specified using `psk`.
     vpn_gateway_configs:
       - name: default
         psk: secret
+        params:
+          lifetime: 8h
+
+General connection parameters like `lifetime` may be set within `params` section (s. [ipsec.conf](https://wiki.strongswan.org/projects/strongswan/wiki/ConnSection) for full parameter description).
+    
+    vpn_gateway_configs:
+      - name: default
+        psk: secret
         local:
           public: 1.1.1.1
-          private: 172.4.0.20
-          private_interface: eth6
           networks:
             - 172.4.0.0/21
         remote:
@@ -36,6 +42,27 @@ used for identification. Pre-shared key can be specified using `psk`.
 
 A configuration set contains the `local` and `remote` peer configuration part.
 
+    vpn_gateway_default_config_params:
+      type: tunnel
+      keyingtries: 0
+      ikelifetime: 1h
+      lifetime: 8h
+      dpddelay: 300s
+      dpdtimeout: 120
+      dpdaction: clear
+      authby: secret
+      auto: start
+      esp: aes256-sha256-modp3072
+      ike: aes256-sha256-modp3072
+      keyexchange: ikev2
+      leftfirewall: 'yes'
+      compress: 'no'
+      rekey: 'no'
+      fragmentation: 'yes'
+      forceencaps: 'yes'
+
+The `params` within `vpn_gateway_configs` extend/override default connection parameters present above. 
+
     vpn_gateway_config_dir: "/etc/ipsec.d/{{ role_name }}"
     
 Defines the custom IPsec configuration directory for isolation purposes.
@@ -45,8 +72,9 @@ Defines the custom IPsec configuration directory for isolation purposes.
 Tags can be used to limit the role execution to a particular task module. Following tags are available:
 
 - `vpn_gateway`: Covers the full role lifecycle.
-- `vpn_gateway_install`, `install`: Installs required packages
-- `vpn_gateway_config`, `config`: Configures required packages
+- `vpn_gateway_validate`, `validate`: Validates given configuration.
+- `vpn_gateway_install`, `install`: Installs required packages.
+- `vpn_gateway_config`, `config`: Configures required packages.
 
 ## Dependencies
 
