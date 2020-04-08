@@ -1,35 +1,9 @@
-# ipsec.conf - strongSwan IPsec configuration file
-
 {{ ansible_managed|comment }}
 
-config setup
-   strictcrlpolicy=no
-   uniqueids=no
-   charondebug="ike 2, knl 0, cfg 2, enc 1, net 0, mgr 0"
-
-{% for config in vpn_gateway_configs %}
-conn {{ config.name }}
-   keyingtries=0
-   ikelifetime=1h
-   lifetime=8h
-   dpddelay=300s
-   dpdtimeout=120
-   dpdaction=clear
-   authby=secret
-   auto=start
-   type=tunnel
-   mobike=no
-   compress=no
-   rekey=no
-   fragmentation=yes
-   forceencaps=yes
-   esp=aes256-sha256-modp3072
-   ike=aes256-sha256-modp3072
-   keyexchange=ikev2
-   mark={{ loop.index }}
-   leftsubnet={{ config.remote.networks | join(',') }}
-   left={{ config.remote.public | ipaddr }}
-   rightupdown=/opt/helpers/create-vti.sh
-   right={{ config.local.public }}
-   rightsubnet={{ config.local.networks | join(',') }}
+{% for connection in vpn_gateway_connections %}
+# {{ connection.left }} -> {{ connection.right }}
+conn {{ connection.name }}
+{% for param_key in connection %}
+    {{ param_key }}={{ connection[param_key] }}
+{% endfor %}
 {% endfor %}

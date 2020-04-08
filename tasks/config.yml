@@ -1,0 +1,72 @@
+---
+- name: Set required sysctl settings
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop: "{{ sysctl_config | dict2items }}"
+  vars:
+    sysctl_config:
+      net.ipv4.ip_forward: 1
+      net.ipv4.conf.all.accept_redirects: 0
+      net.ipv4.conf.all.send_redirects: 0
+      net.ipv6.conf.all.disable_ipv6: 1
+      net.ipv6.conf.default.disable_ipv6: 1
+
+- name: Apply connection defaults
+  set_fact:
+    vpn_gateway_connections: "{{ (vpn_gateway_connections | default([])) + [vpn_gateway_default_config_params \
+      | combine({ \
+        'name': item.name, \
+        'left': item.local.public, \
+        'leftsubnet': (item.local.networks | join(',')), \
+        'right': item.remote.public, \
+        'rightsubnet': (item.remote.networks | join(',')) \
+      }) \
+      | combine(item.params | default({}))] \
+    }}"
+  loop: "{{ vpn_gateway_configs }}"
+
+- name: Create IPsec config directory
+  file:
+    path: "{{ vpn_gateway_config_dir }}"
+    owner: root
+    group: root
+    state: directory
+  notify: restart ipsec
+
+- name: Include IPsec configuration
+  lineinfile:
+    path: /etc/ipsec.conf
+    state: present
+    regexp: "^include {{ vpn_gateway_config_dir + '/*.conf' | regex_escape }}$"
+    line: "include {{ vpn_gateway_config_dir }}/*.conf"
+  notify: restart ipsec
+
+- name: Include IPsec secrets
+  lineinfile:
+    path: /etc/ipsec.secrets
+    state: present
+    regexp: "^include {{ vpn_gateway_config_dir + '/*.secrets' | regex_escape }}$"
+    line: "include {{ vpn_gateway_config_dir }}/*.secrets"
+  notify: restart ipsec
+
+- name: Copy IPsec configuration
+  template:
+    src: ipsec.conf.j2
+    dest: "{{ vpn_gateway_config_dir }}/ipsec.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart ipsec
+
+- name: Copy IPsec secrets
+  template:
+    src: ipsec.secrets.j2
+    dest: "{{ vpn_gateway_config_dir }}/ipsec.secrets"
+    owner: root
+    group: root
+    mode: 0600
+  notify: reload ipsec

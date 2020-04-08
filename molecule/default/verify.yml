@@ -2,26 +2,6 @@
 - name: Verify
   hosts: all
   tasks:
-    - name: List iptables rules and look for 172.240.0.0/21 network
-      shell: iptables --list --verbose --numeric --exact --line-numbers | egrep "172.240.0.0/21[[:blank:]]+0.0.0.0/0"  # noqa 301 306
-      register: result
-    - name: Confirm that a rule for 172.240.0.0/21 network is present
-      assert:
-        that:
-          - result is defined
-          - result.failed is defined
-          - not result.failed
-
-    - name: List iptables rules and look for 10.2.0.0/16 network
-      shell: iptables --list --verbose --numeric --exact --line-numbers | egrep "10.2.0.0/16[[:blank:]]+0.0.0.0/0" # noqa 301 306
-      register: result
-    - name: Confirm that a rule for 10.2.0.0/16 network is present
-      assert:
-        that:
-          - result is defined
-          - result.failed is defined
-          - not result.failed
-
     - name: Is IP Forwarding configured?
       shell: grep '^1$' /proc/sys/net/ipv4/ip_forward  # noqa 301
       register: result

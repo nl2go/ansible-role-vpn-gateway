@@ -1,5 +1,5 @@
 ---
-- name: Validate Strongswan connection names are unique
+- name: Validate uniqueness of connection names
   assert:
     that: >
       vpn_gateway_configs | map(attribute='name') | list | unique | count
@@ -7,18 +7,15 @@
       vpn_gateway_configs | map(attribute='name') | list | count
     fail_msg: Variables 'vpn_gateway_configs.name' are not unique
 
-- name: Validate 'remote.public'
+- name: Validate remote and local IP addresses
   assert:
-    that: item.remote.public | ipaddr
-    fail_msg: "Variable 'remote_public_ip' is not an IP address for vpn_gateway_configs with name: {{ item.name }}"
+    that:
+      - item.local.public | ipaddr
+      - item.remote.public | ipaddr
+    fail_msg: "Verify IP configuration of vpn_gateway_configs.{{ item.name }}. At least one is not a valid IP address."
   loop: "{{ vpn_gateway_configs }}"
 
-- name: Be sure we have a VPN to configure
-  assert:
-    that: vpn_gateway_configs is defined
-    fail_msg: "No VPN is configured. Check your host_vars for this host."
-
-- name: Validate 'psk'
+- name: Validate PSK
   assert:
     that: item.psk | length > 0
     fail_msg: "Variable 'psk' is not correct for vpn_gateway_configs with name: {{ item.name }}"

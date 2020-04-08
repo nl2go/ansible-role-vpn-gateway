@@ -3,5 +3,8 @@
   package:
     name:
       - strongswan
-      - libstrongswan-standard-plugins
-  when: vpn_gateway_configs is defined
+
+- name: IPSec must be running
+  service:
+    name: strongswan
+    state: started

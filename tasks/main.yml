@@ -1,18 +1,12 @@
 ---
-- import_tasks: validate-configuration.yml
-  tags: [validate]
+- import_tasks: validate.yml
+  tags: ['vpn_gateway', 'vpn_gateway_validate', 'validate']
+  when: vpn_gateway_configs is defined and (vpn_gateway_configs | length > 0)
 
 - import_tasks: install.yml
-  tags: [install]
+  when: vpn_gateway_configs is defined and (vpn_gateway_configs | length > 0)
+  tags: ['vpn_gateway', 'vpn_gateway_install', 'install']
 
-- import_tasks: configure-strongswan.yml
-  tags: [strongswan, ipsec]
-  when: vpn_gateway_configs is defined
-
-- import_tasks: install-helpers.yml
-  tags: [helpers]
-  when: vpn_gateway_configs is defined
-
-- import_tasks: nat.yml
-  tags: [nat]
-  when: vpn_gateway_configs is defined
+- import_tasks: config.yml
+  tags: ['vpn_gateway', 'vpn_gateway_config', 'config']
+  when: vpn_gateway_configs is defined and (vpn_gateway_configs | length > 0)

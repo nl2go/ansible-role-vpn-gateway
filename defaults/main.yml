@@ -1,3 +1,21 @@
 ---
 vpn_gateway_config_dir: "/etc/ipsec.d/{{ role_name }}"
 vpn_gateway_configs: []
+vpn_gateway_default_config_params:
+  type: tunnel
+  keyingtries: 0
+  ikelifetime: 1h
+  lifetime: 8h
+  dpddelay: 300s
+  dpdtimeout: 120
+  dpdaction: clear
+  authby: secret
+  auto: start
+  esp: aes256-sha256-modp3072
+  ike: aes256-sha256-modp3072
+  keyexchange: ikev2
+  leftfirewall: 'yes'
+  compress: 'no'
+  rekey: 'no'
+  fragmentation: 'yes'
+  forceencaps: 'yes'
