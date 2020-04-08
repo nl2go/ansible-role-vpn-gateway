@@ -21,6 +21,12 @@ used for identification. Pre-shared key can be specified using `psk`.
     
     vpn_gateway_configs:
       - name: default
+        state: absent
+
+The specific gateway configuration can be removed using `state: absent`.        
+    
+    vpn_gateway_configs:
+      - name: default
         psk: secret
         params:
           lifetime: 8h

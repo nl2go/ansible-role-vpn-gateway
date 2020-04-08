@@ -15,9 +15,13 @@
       net.ipv6.conf.all.disable_ipv6: 1
       net.ipv6.conf.default.disable_ipv6: 1
 
+- name: Init connections variable
+  set_fact:
+    vpn_gateway_connections: []
+
 - name: Apply connection defaults
   set_fact:
-    vpn_gateway_connections: "{{ (vpn_gateway_connections | default([])) + [vpn_gateway_default_config_params \
+    vpn_gateway_connections: "{{ vpn_gateway_connections + [vpn_gateway_default_config_params \
       | combine({ \
         'name': item.name, \
         'left': item.local.public, \
@@ -27,6 +31,7 @@
       }) \
       | combine(item.params | default({}))] \
     }}"
+  when: (item.state | default('present')) == 'present'
   loop: "{{ vpn_gateway_configs }}"
 
 - name: Create IPsec config directory

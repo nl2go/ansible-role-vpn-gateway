@@ -13,10 +13,12 @@
       - item.local.public | ipaddr
       - item.remote.public | ipaddr
     fail_msg: "Verify IP configuration of vpn_gateway_configs.{{ item.name }}. At least one is not a valid IP address."
+  when: (item.state | default('present')) == 'present'
   loop: "{{ vpn_gateway_configs }}"
 
 - name: Validate PSK
   assert:
     that: item.psk | length > 0
     fail_msg: "Variable 'psk' is not correct for vpn_gateway_configs with name: {{ item.name }}"
+  when: (item.state | default('present')) == 'present'
   loop: "{{ vpn_gateway_configs }}"
