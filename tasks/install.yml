@@ -6,5 +6,6 @@
 
 - name: IPSec must be running
   service:
-    name: strongswan
+    name: "{{ vpn_gateway_service }}"
     state: started
+    enabled: yes
