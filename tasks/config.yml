@@ -72,4 +72,16 @@
     owner: root
     group: root
     mode: 0600
-  notify: reload ipsec
+  notify: restart ipsec
+
+- name: Copy ca certs
+  copy:
+    content: "{{ item.content }}"
+    dest: "/etc/ipsec.d/cacert/{{ name }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ vpn_gateway_cacerts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: restart ipsec
