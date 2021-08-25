@@ -1,6 +1,8 @@
 ---
+vpn_gateway_service: strongswan
 vpn_gateway_config_dir: "/etc/ipsec.d/{{ role_name }}"
 vpn_gateway_configs: []
+vpn_gateway_cacerts: []
 vpn_gateway_default_config_params:
   type: tunnel
   keyingtries: 0
