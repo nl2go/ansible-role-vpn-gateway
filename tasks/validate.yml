@@ -20,5 +20,7 @@
   assert:
     that: item.psk | length > 0
     fail_msg: "Variable 'psk' is not correct for vpn_gateway_configs with name: {{ item.name }}"
-  when: (item.state | default('present')) == 'present'
+  when:
+    - (item.state | default('present')) == 'present'
+    - item.private_key is not defined
   loop: "{{ vpn_gateway_configs }}"
