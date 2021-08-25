@@ -77,7 +77,7 @@
 - name: Copy ca certs
   copy:
     content: "{{ item.content }}"
-    dest: "/etc/ipsec.d/cacert/{{ name }}"
+    dest: "/etc/ipsec.d/cacert/{{ item.name }}"
     owner: root
     group: root
     mode: 0644
